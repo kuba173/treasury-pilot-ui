@@ -1,5 +1,4 @@
 import { vendors } from '@/lib/mock-data';
-import { RiskBadge } from '@/components/StatusBadge';
 import { cn } from '@/lib/utils';
 import { Users, Shield, Wallet, Globe, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 

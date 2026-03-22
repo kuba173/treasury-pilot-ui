@@ -29,13 +29,11 @@ import { walletBalances } from '@/lib/mock-data';
 const mainNav = [
   { title: 'Dashboard', url: '/', icon: LayoutDashboard },
   { title: 'Invoice Inbox', url: '/invoices', icon: Inbox },
-  { title: 'Payments', url: '/payments', icon: CreditCard },
   { title: 'Approvals', url: '/approvals', icon: CheckCircle },
 ];
 
 const riskNav = [
   { title: 'Alerts', url: '/alerts', icon: AlertTriangle },
-  { title: 'Vendors', url: '/vendors', icon: Users },
   { title: 'Audit Trail', url: '/audit', icon: ScrollText },
 ];
 
@@ -80,12 +78,12 @@ export function AppSidebar() {
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2.5">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-            <Shield className="h-4 w-4 text-primary-foreground" />
+          <div className="h-9 w-9 rounded-xl overflow-hidden shrink-0 ring-1 ring-border shadow-sm">
+            <img src="/logo.png" alt="InvoiceGuard" className="h-full w-full object-cover" />
           </div>
           {!collapsed && (
             <div>
-              <h1 className="text-sm font-bold tracking-tight text-foreground">Treasury Pilot</h1>
+              <h1 className="text-sm font-bold tracking-tight text-foreground">InvoiceGuard</h1>
               <p className="text-[10px] text-muted-foreground">AI-Powered AP</p>
             </div>
           )}
@@ -101,11 +99,31 @@ export function AppSidebar() {
           <div className="space-y-1.5">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-semibold">Treasury</p>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">USDC</span>
+              <div className="flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-[hsl(217,91%,60%)]" />
+                <span className="text-muted-foreground">USDC</span>
+              </div>
               <span className="font-mono font-medium text-foreground">${walletBalances.usdc.toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">SOL</span>
+              <div className="flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-[hsl(158,64%,52%)]" />
+                <span className="text-muted-foreground">USDT</span>
+              </div>
+              <span className="font-mono font-medium text-foreground">${walletBalances.usdt.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-[hsl(36,100%,50%)]" />
+                <span className="text-muted-foreground">EURC</span>
+              </div>
+              <span className="font-mono font-medium text-foreground">€{walletBalances.eurc.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center justify-between text-xs pt-0.5 border-t border-sidebar-border">
+              <div className="flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-[hsl(291,47%,60%)]" />
+                <span className="text-muted-foreground">SOL</span>
+              </div>
               <span className="font-mono font-medium text-foreground">{walletBalances.sol}</span>
             </div>
           </div>

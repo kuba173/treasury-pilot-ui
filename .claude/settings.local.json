@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(grep -v \"^$\")",
+      "Bash(npx tsc:*)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\jkier\\OneDrive\\Pulpit\\blockchain hack\\treasury-pilot-ui\\src"
+    ]
+  }
+}

@@ -78,40 +78,7 @@ export default function PolicyEngine() {
         </div>
       </div>
 
-      {/* Simulation */}
-      <div className="rounded-lg border border-glow bg-card p-6 shadow-glow">
-        <div className="flex items-center gap-2 mb-5">
-          <Zap className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-semibold">Policy Simulator</h3>
-          <span className="text-xs text-muted-foreground ml-1">What would happen if this invoice arrived?</span>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <label className="text-xs text-muted-foreground">Invoice Amount (USD)</label>
-            <Input type="number" value={simAmount} onChange={(e) => setSimAmount(e.target.value)} className="font-mono bg-secondary/50" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-xs text-muted-foreground">Vendor Type</label>
-            <select value={simVendor} onChange={(e) => setSimVendor(e.target.value)} className="w-full h-9 rounded-md border bg-secondary/50 px-3 text-sm">
-              <option value="known">Known Vendor</option>
-              <option value="new">New Vendor</option>
-              <option value="wallet-changed">Wallet Changed</option>
-            </select>
-          </div>
-          <div className="flex items-end">
-            <Button onClick={runSimulation} className="w-full">
-              <Play className="h-3.5 w-3.5 mr-1.5" /> Simulate
-            </Button>
-          </div>
-        </div>
-        {simResult && (
-          <div className="mt-4 p-4 rounded-lg bg-muted/50 border border-border text-sm whitespace-pre-line">
-            {simResult}
-          </div>
-        )}
-      </div>
-
-      <div className="rounded-lg border bg-card p-4">
+<div className="rounded-lg border bg-card p-4">
         <p className="text-xs text-muted-foreground text-center">
           <Shield className="h-3 w-3 inline mr-1" />
           All policy rules are enforced on-chain via Solana smart contracts after AI verification completes.

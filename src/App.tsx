@@ -7,9 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppLayout } from "@/components/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import InvoiceInbox from "./pages/InvoiceInbox";
-import PaymentExecution from "./pages/PaymentExecution";
 import PolicyEngine from "./pages/PolicyEngine";
-import VendorProfile from "./pages/VendorProfile";
 import AlertsCenter from "./pages/AlertsCenter";
 import ApprovalQueue from "./pages/ApprovalQueue";
 import AuditTrail from "./pages/AuditTrail";
@@ -32,10 +30,8 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/invoices" element={<InvoiceInbox />} />
-              <Route path="/payments" element={<PaymentExecution />} />
               <Route path="/approvals" element={<ApprovalQueue />} />
               <Route path="/alerts" element={<AlertsCenter />} />
-              <Route path="/vendors" element={<VendorProfile />} />
               <Route path="/audit" element={<AuditTrail />} />
               <Route path="/policy" element={<PolicyEngine />} />
               <Route path="*" element={<NotFound />} />

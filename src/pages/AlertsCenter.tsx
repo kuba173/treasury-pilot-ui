@@ -1,5 +1,4 @@
 import { alerts } from '@/lib/mock-data';
-import { SeverityBadge } from '@/components/StatusBadge';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Pause, ArrowUpRight, Eye, MessageSquare } from 'lucide-react';
@@ -34,7 +33,7 @@ export default function AlertsCenter() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="text-sm font-semibold">{alert.type}</h3>
-                    <SeverityBadge severity={alert.severity} />
+                    <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-medium border capitalize', { 'bg-destructive/15 text-destructive border-destructive/20': alert.severity === 'critical' || alert.severity === 'high', 'bg-warning/15 text-warning border-warning/20': alert.severity === 'medium', 'bg-muted/15 text-muted-foreground border-border': alert.severity === 'low' })}>{alert.severity}</span>
                     <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-medium border', statusStyles[alert.status])}>
                       {alert.status}
                     </span>

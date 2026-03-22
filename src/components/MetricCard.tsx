@@ -9,11 +9,15 @@ interface MetricCardProps {
   trend?: { value: string; positive: boolean };
   className?: string;
   iconClassName?: string;
+  onClick?: () => void;
 }
 
-export function MetricCard({ title, value, subtitle, icon: Icon, trend, className, iconClassName }: MetricCardProps) {
+export function MetricCard({ title, value, subtitle, icon: Icon, trend, className, iconClassName, onClick }: MetricCardProps) {
   return (
-    <div className={cn('rounded-lg border bg-card p-5 shadow-glow', className)}>
+    <div
+      className={cn('rounded-lg border bg-card p-5 shadow-glow', onClick && 'cursor-pointer hover:border-primary/50 transition-colors', className)}
+      onClick={onClick}
+    >
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{title}</p>

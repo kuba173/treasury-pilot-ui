@@ -1,17 +1,33 @@
 import { useState } from 'react';
-import { invoices, type Invoice, type RiskLevel } from '@/lib/mock-data';
-import { RiskBadge, StatusBadge } from '@/components/StatusBadge';
+import { invoices, type Invoice, type StableCoin } from '@/lib/mock-data';
+import { StatusBadge } from '@/components/StatusBadge';
 import { Input } from '@/components/ui/input';
 import { Search, X, FileText, BrainCircuit, Shield, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-const filters = ['all', 'low', 'medium', 'high', 'duplicates', 'new-vendors', 'above-threshold'] as const;
+const coinColors: Record<StableCoin, { bg: string; text: string }> = {
+  USDC: { bg: 'bg-blue-500/15', text: 'text-blue-400' },
+  USDT: { bg: 'bg-emerald-500/15', text: 'text-emerald-400' },
+  EURC: { bg: 'bg-amber-500/15', text: 'text-amber-400' },
+};
+
+function CoinBadge({ coin, amount }: { coin: StableCoin; amount: number }) {
+  const c = coinColors[coin];
+  const prefix = coin === 'EURC' ? '€' : '$';
+  return (
+    <span className={cn('inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold', c.bg, c.text)}>
+      {coin} {prefix}{amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+    </span>
+  );
+}
+
+const filters = ['all', 'approved', 'needs-approval', 'blocked', 'new-vendors', 'above-threshold'] as const;
 type Filter = typeof filters[number];
 
 const filterLabels: Record<Filter, string> = {
-  all: 'All', low: 'Low Risk', medium: 'Medium Risk', high: 'High Risk',
-  duplicates: 'Duplicates', 'new-vendors': 'New Vendors', 'above-threshold': 'Above Threshold',
+  all: 'All', approved: 'Auto-Approved', 'needs-approval': 'Needs Approval', blocked: 'Blocked',
+  'new-vendors': 'New Vendors', 'above-threshold': 'Above Threshold',
 };
 
 function InvoiceDetailPanel({ invoice, onClose }: { invoice: Invoice; onClose: () => void }) {
@@ -19,7 +35,7 @@ function InvoiceDetailPanel({ invoice, onClose }: { invoice: Invoice; onClose: (
     { label: 'Vendor domain matches historical pattern', result: invoice.riskScore < 50, },
     { label: 'Wallet changed from last invoice', result: invoice.riskScore > 60, negative: true },
     { label: `Amount is ${invoice.riskScore > 40 ? '18% above' : 'within'} normal range`, result: invoice.riskScore <= 40 },
-    { label: 'Invoice number similarity to prior paid invoice', result: invoice.status === 'duplicate-suspected', negative: true },
+    { label: 'Invoice number similarity to prior paid invoice', result: invoice.status === 'blocked', negative: true },
     { label: 'Duplicate likelihood', result: invoice.status !== 'duplicate-suspected' },
     { label: `Fraud risk score: ${invoice.riskScore}/100`, result: invoice.riskScore < 30 },
   ];
@@ -51,8 +67,16 @@ function InvoiceDetailPanel({ invoice, onClose }: { invoice: Invoice; onClose: (
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div><span className="text-muted-foreground">Vendor</span><p className="font-medium">{invoice.vendor}</p></div>
             <div><span className="text-muted-foreground">Country</span><p className="font-medium">{invoice.vendorCountry}</p></div>
-            <div><span className="text-muted-foreground">Amount</span><p className="font-medium text-lg">${invoice.amount.toLocaleString()}</p></div>
-            <div><span className="text-muted-foreground">Currency</span><p className="font-medium">{invoice.currency}</p></div>
+            <div>
+              <span className="text-muted-foreground">Invoice Amount</span>
+              <p className="font-medium text-lg">{invoice.currency} {invoice.amount.toLocaleString()}</p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Settlement</span>
+              <div className="mt-1">
+                <CoinBadge coin={invoice.settlementCoin} amount={invoice.settlementAmount} />
+              </div>
+            </div>
             <div><span className="text-muted-foreground">Due Date</span><p className="font-medium">{invoice.dueDate}</p></div>
             <div><span className="text-muted-foreground">Source</span><p className="font-medium capitalize">{invoice.source}</p></div>
             <div className="col-span-2"><span className="text-muted-foreground">Wallet</span><p className="font-mono text-[10px] break-all">{invoice.walletAddress}</p></div>
@@ -133,10 +157,9 @@ export default function InvoiceInbox() {
   const filtered = invoices.filter((inv) => {
     if (search && !inv.vendor.toLowerCase().includes(search.toLowerCase()) && !inv.invoiceNumber.toLowerCase().includes(search.toLowerCase())) return false;
     if (activeFilter === 'all') return true;
-    if (activeFilter === 'low') return inv.riskLevel === 'low';
-    if (activeFilter === 'medium') return inv.riskLevel === 'medium';
-    if (activeFilter === 'high') return inv.riskLevel === 'high' || inv.riskLevel === 'critical';
-    if (activeFilter === 'duplicates') return inv.status === 'duplicate-suspected';
+    if (activeFilter === 'approved') return inv.status === 'auto-approved';
+    if (activeFilter === 'needs-approval') return inv.status === 'needs-approval';
+    if (activeFilter === 'blocked') return inv.status === 'blocked';
     if (activeFilter === 'above-threshold') return inv.amount > 200;
     return true;
   });
@@ -178,7 +201,6 @@ export default function InvoiceInbox() {
                   <th className="text-left p-3 font-medium text-muted-foreground">Invoice #</th>
                   <th className="text-right p-3 font-medium text-muted-foreground">Amount</th>
                   <th className="text-left p-3 font-medium text-muted-foreground">Due Date</th>
-                  <th className="text-left p-3 font-medium text-muted-foreground">Risk</th>
                   <th className="text-left p-3 font-medium text-muted-foreground">Status</th>
                   <th className="text-left p-3 font-medium text-muted-foreground">Source</th>
                   <th className="text-left p-3 font-medium text-muted-foreground">Route</th>
@@ -200,12 +222,16 @@ export default function InvoiceInbox() {
                       </div>
                     </td>
                     <td className="p-3 font-mono">{inv.invoiceNumber}</td>
-                    <td className="p-3 text-right font-mono font-medium">${inv.amount.toLocaleString()}</td>
+                    <td className="p-3 text-right">
+                      <p className="font-mono font-semibold">{inv.settlementCoin === 'EURC' ? '€' : '$'}{inv.settlementAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })} <span className={cn('text-[10px]', inv.settlementCoin === 'USDC' ? 'text-blue-400' : inv.settlementCoin === 'USDT' ? 'text-emerald-400' : 'text-amber-400')}>{inv.settlementCoin}</span></p>
+                      <p className="text-[10px] text-muted-foreground font-mono">{inv.currency} {inv.amount.toLocaleString()}</p>
+                    </td>
                     <td className="p-3 text-muted-foreground">{inv.dueDate}</td>
-                    <td className="p-3"><RiskBadge level={inv.riskLevel} /></td>
                     <td className="p-3"><StatusBadge status={inv.status} /></td>
                     <td className="p-3 capitalize text-muted-foreground">{inv.source}</td>
-                    <td className="p-3 text-muted-foreground">{inv.paymentRoute}</td>
+                    <td className="p-3">
+                      <CoinBadge coin={inv.settlementCoin} amount={inv.settlementAmount} />
+                    </td>
                   </tr>
                 ))}
               </tbody>

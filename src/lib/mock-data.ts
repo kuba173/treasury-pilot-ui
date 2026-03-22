@@ -1,6 +1,7 @@
-export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
-export type InvoiceStatus = 'auto-approved' | 'pending-review' | 'blocked' | 'duplicate-suspected' | 'awaiting-approval' | 'paid-on-chain';
+export type InvoiceStatus = 'auto-approved' | 'needs-approval' | 'blocked';
 export type InvoiceSource = 'email' | 'upload' | 'erp';
+
+export type StableCoin = 'USDC' | 'USDT' | 'EURC';
 
 export interface Invoice {
   id: string;
@@ -11,10 +12,11 @@ export interface Invoice {
   currency: string;
   dueDate: string;
   riskScore: number;
-  riskLevel: RiskLevel;
   status: InvoiceStatus;
   source: InvoiceSource;
   paymentRoute: string;
+  settlementCoin: StableCoin;
+  settlementAmount: number;
   walletAddress: string;
   serviceDescription: string;
   receivedAt: string;
@@ -39,7 +41,7 @@ export interface Vendor {
 export interface Alert {
   id: string;
   type: string;
-  severity: RiskLevel;
+  severity: 'critical' | 'high' | 'medium' | 'low';
   vendor: string;
   description: string;
   timestamp: string;
@@ -67,10 +69,11 @@ export const invoices: Invoice[] = [
     currency: 'EUR',
     dueDate: '2026-03-28',
     riskScore: 8,
-    riskLevel: 'low',
     status: 'auto-approved',
     source: 'email',
-    paymentRoute: 'USDC → Solana',
+    paymentRoute: 'EURC → Solana',
+    settlementCoin: 'EURC',
+    settlementAmount: 145.00,
     walletAddress: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
     serviceDescription: 'Monthly SaaS subscription – Analytics module',
     receivedAt: '2026-03-21T08:15:00Z',
@@ -84,10 +87,11 @@ export const invoices: Invoice[] = [
     currency: 'USD',
     dueDate: '2026-04-05',
     riskScore: 42,
-    riskLevel: 'medium',
-    status: 'pending-review',
+    status: 'needs-approval',
     source: 'erp',
     paymentRoute: 'USDC → Solana',
+    settlementCoin: 'USDC',
+    settlementAmount: 12500.00,
     walletAddress: '3Fk8gMBs4k2YbJRmEzF7XVJgk3MkN7yvnBbz1KQaC8Ab',
     serviceDescription: 'Q1 consulting services – market research',
     receivedAt: '2026-03-21T09:22:00Z',
@@ -101,10 +105,11 @@ export const invoices: Invoice[] = [
     currency: 'USD',
     dueDate: '2026-03-30',
     riskScore: 87,
-    riskLevel: 'high',
     status: 'blocked',
     source: 'email',
-    paymentRoute: 'USDC → Solana',
+    paymentRoute: 'USDT → Solana',
+    settlementCoin: 'USDT',
+    settlementAmount: 8750.00,
     walletAddress: '9pGEF3rD1HqLgTeA3WmQjZxJk4YtBb2cFpNqRvUiG7Xs',
     serviceDescription: 'Hardware procurement – server equipment',
     receivedAt: '2026-03-21T07:45:00Z',
@@ -118,10 +123,11 @@ export const invoices: Invoice[] = [
     currency: 'USD',
     dueDate: '2026-04-01',
     riskScore: 5,
-    riskLevel: 'low',
-    status: 'paid-on-chain',
+    status: 'auto-approved',
     source: 'email',
     paymentRoute: 'USDC → Solana',
+    settlementCoin: 'USDC',
+    settlementAmount: 89.99,
     walletAddress: '5tYh3KxN8qWvPjR2Gm7dLsVpCfT9AeB4nZuXkF6wY1M',
     serviceDescription: 'Cloud hosting – March 2026',
     receivedAt: '2026-03-20T14:30:00Z',
@@ -135,10 +141,11 @@ export const invoices: Invoice[] = [
     currency: 'USD',
     dueDate: '2026-04-15',
     riskScore: 65,
-    riskLevel: 'high',
-    status: 'awaiting-approval',
+    status: 'needs-approval',
     source: 'upload',
-    paymentRoute: 'USDC → Solana',
+    paymentRoute: 'USDT → Solana',
+    settlementCoin: 'USDT',
+    settlementAmount: 34200.00,
     walletAddress: '2mR7VbNpQ4xJh8LsT3KwF5Yc6dGnA9eU1ZjXrP0iW4S',
     serviceDescription: 'Software development – Phase 2 milestone',
     receivedAt: '2026-03-21T11:00:00Z',
@@ -152,10 +159,11 @@ export const invoices: Invoice[] = [
     currency: 'EUR',
     dueDate: '2026-03-28',
     riskScore: 92,
-    riskLevel: 'critical',
-    status: 'duplicate-suspected',
+    status: 'blocked',
     source: 'email',
-    paymentRoute: 'USDC → Solana',
+    paymentRoute: 'EURC → Solana',
+    settlementCoin: 'EURC',
+    settlementAmount: 145.00,
     walletAddress: '7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU',
     serviceDescription: 'Monthly SaaS subscription – Analytics module',
     receivedAt: '2026-03-21T08:45:00Z',
@@ -169,10 +177,11 @@ export const invoices: Invoice[] = [
     currency: 'EUR',
     dueDate: '2026-04-10',
     riskScore: 28,
-    riskLevel: 'low',
-    status: 'awaiting-approval',
+    status: 'needs-approval',
     source: 'erp',
-    paymentRoute: 'USDC → Solana',
+    paymentRoute: 'EURC → Solana',
+    settlementCoin: 'EURC',
+    settlementAmount: 4800.00,
     walletAddress: '8nS4RmKvL2pXj9BtQ7wYh3FcD6gTrA1eU5ZxJkN0iW2P',
     serviceDescription: 'Strategy consulting – Market expansion plan',
     receivedAt: '2026-03-20T16:20:00Z',
@@ -186,10 +195,11 @@ export const invoices: Invoice[] = [
     currency: 'USD',
     dueDate: '2026-04-20',
     riskScore: 78,
-    riskLevel: 'high',
-    status: 'pending-review',
+    status: 'needs-approval',
     source: 'email',
-    paymentRoute: 'USDC → Solana',
+    paymentRoute: 'USDT → Solana',
+    settlementCoin: 'USDT',
+    settlementAmount: 67500.00,
     walletAddress: '4kT9HmWvN3pYr7BsQ2xJh8LcF5dGnA6eU1ZjXkP0iR3S',
     serviceDescription: 'Commodity procurement – rare materials',
     receivedAt: '2026-03-21T06:30:00Z',
@@ -203,10 +213,11 @@ export const invoices: Invoice[] = [
     currency: 'EUR',
     dueDate: '2026-03-25',
     riskScore: 12,
-    riskLevel: 'low',
     status: 'auto-approved',
     source: 'erp',
-    paymentRoute: 'USDC → Solana',
+    paymentRoute: 'EURC → Solana',
+    settlementCoin: 'EURC',
+    settlementAmount: 175.00,
     walletAddress: '6pW2RnKvM4qXj5BtH8cYh1FaD3gTsA7eU9ZxJkN0iW5L',
     serviceDescription: 'License renewal – project management tools',
     receivedAt: '2026-03-21T10:10:00Z',
@@ -220,10 +231,11 @@ export const invoices: Invoice[] = [
     currency: 'USD',
     dueDate: '2026-04-02',
     riskScore: 35,
-    riskLevel: 'medium',
-    status: 'pending-review',
+    status: 'needs-approval',
     source: 'upload',
     paymentRoute: 'USDC → Solana',
+    settlementCoin: 'USDC',
+    settlementAmount: 2200.00,
     walletAddress: '1mN8VbKpQ3xJh6LsT5RwF2Yc9dGnA4eU7ZjXrP0iW8K',
     serviceDescription: 'Legal services – international compliance review',
     receivedAt: '2026-03-21T12:45:00Z',
@@ -320,15 +332,48 @@ export const payoutChartData = [
   { date: 'Mar 21', amount: 38600 },
 ];
 
-export const riskDistribution = [
-  { name: 'Low Risk', value: 62, fill: 'hsl(160, 60%, 45%)' },
-  { name: 'Medium Risk', value: 23, fill: 'hsl(38, 92%, 50%)' },
-  { name: 'High Risk', value: 12, fill: 'hsl(0, 72%, 51%)' },
-  { name: 'Critical', value: 3, fill: 'hsl(0, 72%, 35%)' },
+export const statusDistribution = [
+  { name: 'Auto-Approved', value: 30, fill: 'hsl(160, 60%, 45%)' },
+  { name: 'Needs Approval', value: 50, fill: 'hsl(38, 92%, 50%)' },
+  { name: 'Blocked', value: 20, fill: 'hsl(0, 72%, 51%)' },
 ];
+
+export type Period = 'today' | 'week' | 'month' | 'year';
+
+export const periodChartData: Record<Period, { date: string; amount: number }[]> = {
+  today: [
+    { date: '08:00', amount: 8200 }, { date: '10:00', amount: 14500 }, { date: '12:00', amount: 9800 },
+    { date: '14:00', amount: 22100 }, { date: '16:00', amount: 17600 }, { date: '18:00', amount: 5400 },
+  ],
+  week: [
+    { date: 'Mon', amount: 24500 }, { date: 'Tue', amount: 18200 }, { date: 'Wed', amount: 42100 },
+    { date: 'Thu', amount: 31800 }, { date: 'Fri', amount: 55200 }, { date: 'Sat', amount: 12400 },
+    { date: 'Sun', amount: 38600 },
+  ],
+  month: [
+    { date: 'Mar 1', amount: 24500 }, { date: 'Mar 4', amount: 18200 }, { date: 'Mar 7', amount: 42100 },
+    { date: 'Mar 10', amount: 31800 }, { date: 'Mar 13', amount: 55200 }, { date: 'Mar 16', amount: 28900 },
+    { date: 'Mar 19', amount: 47300 }, { date: 'Mar 21', amount: 38600 },
+  ],
+  year: [
+    { date: 'Jan', amount: 210000 }, { date: 'Feb', amount: 185000 }, { date: 'Mar', amount: 286000 },
+    { date: 'Apr', amount: 0 }, { date: 'May', amount: 0 }, { date: 'Jun', amount: 0 },
+    { date: 'Jul', amount: 0 }, { date: 'Aug', amount: 0 }, { date: 'Sep', amount: 0 },
+    { date: 'Oct', amount: 0 }, { date: 'Nov', amount: 0 }, { date: 'Dec', amount: 0 },
+  ],
+};
+
+export const periodStats: Record<Period, { received: number; approved: number; pending: number; blocked: number; payout: string; trend: string }> = {
+  today:  { received: 10,   approved: 3,    pending: 5,    blocked: 2,   payout: '$77K',   trend: '+3 vs yesterday' },
+  week:   { received: 68,   approved: 21,   pending: 32,   blocked: 15,  payout: '$223K',  trend: '+8% vs last week' },
+  month:  { received: 286,  approved: 89,   pending: 141,  blocked: 56,  payout: '$286K',  trend: '+12% MoM' },
+  year:   { received: 3240, approved: 1012, pending: 1620, blocked: 608, payout: '$681K',  trend: '+24% YoY' },
+};
 
 export const walletBalances = {
   usdc: 284750.42,
+  usdt: 45230.00,
+  eurc: 18640.00,
   sol: 12.847,
 };
 
